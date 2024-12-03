@@ -53,6 +53,11 @@
             {
                 isIncreasing = false;
             }
+
+            if (!isIncreasing && !isDecreasing)
+            {
+                break;
+            }
         }
 
         return isIncreasing || isDecreasing;
