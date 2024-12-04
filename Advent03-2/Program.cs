@@ -18,7 +18,7 @@ class Program
             {
                 Console.WriteLine(dontLine);
                 var tokens = dontLine.Split("do()");
-                if (tokens.Length > 2)
+                if (tokens.Length > 1)
                 {
                     // beginning of the line is disabled, the second token is enabled
                     doLines.AddRange(tokens.Skip(1));
@@ -26,6 +26,7 @@ class Program
             }
         }
 
+        Console.WriteLine("Enabled lines:");
         foreach (string line in doLines)
         {
             Console.WriteLine(line);
