@@ -19,19 +19,22 @@
         Console.WriteLine(safeCount);
     }
 
+    static int count = 0;
     static bool CheckSafety(int[] levels)
     {
+        Console.Write($">> Checking pattern: {string.Join(" ", levels)}");
         int[] checkedLevels = CheckPattern2(levels, true);
         if (checkedLevels.Length < 1)
         {
-            Console.Write($">> Checking pattern: {string.Join(" ", levels)}");
-            //Console.WriteLine("...unsafe");
-            Console.WriteLine();
+            Console.WriteLine($"...{count}");
+            //Console.WriteLine();
             return false;
         }
 
+        count++;
+        Console.WriteLine($"...{count}");
         //Console.WriteLine("...safe");
-        Console.WriteLine();
+        //Console.WriteLine();
         return true;
     }
 
@@ -70,20 +73,34 @@
         isDecreasing = countP < countN;
 
         //Console.WriteLine($"{string.Join(" ", diffs)}");
-        Console.Write($" diffs: {string.Join(" ", diffs)}");
+        //Console.Write($" diffs: {string.Join(" ", diffs)}");
 
         int excludeIndex;
         if (isDecreasing && (excludeIndex = GetOutlierN(diffs)) > -1)
         {
-            //excludeIndex++;
-            int[] newLevels = levels.TakeWhile((_, index) => index != excludeIndex).Union(levels.Skip(excludeIndex + 1)).ToArray();
+            int[] newLevels = levels.Take(excludeIndex).Concat(levels.Skip(excludeIndex + 1)).ToArray();
+            var res = CheckPattern2(newLevels, false);
+            if (res.Length > 0)
+            {
+                return res;
+            }
+
+            excludeIndex++;
+            newLevels = levels.Take(excludeIndex).Concat(levels.Skip(excludeIndex + 1)).ToArray();
             return CheckPattern2(newLevels, false);
         }
 
         if (isIncreasing && (excludeIndex = GetOutlierP(diffs)) > -1)
         {
+            int[] newLevels = levels.Take(excludeIndex).Concat(levels.Skip(excludeIndex + 1)).ToArray();
+            var res = CheckPattern2(newLevels, false);
+            if (res.Length > 0)
+            {
+                return res;
+            }
+
             excludeIndex++;
-            int[] newLevels = levels.TakeWhile((_, index) => index != excludeIndex).Union(levels.Skip(excludeIndex + 1)).ToArray();
+            newLevels = levels.Take(excludeIndex).Concat(levels.Skip(excludeIndex + 1)).ToArray();
             return CheckPattern2(newLevels, false);
         }
 
@@ -99,6 +116,10 @@
             if (outliers.Length == 1)
             {
                 return values.IndexOf(outliers[0]);
+            }
+            else if (outliers.Length > 1)
+            {
+                return -1;
             }
 
             outliers = values.Where(value => value < -3).ToArray();
@@ -117,6 +138,11 @@
             {
                 return values.IndexOf(outliers[0]);
             }
+            else if (outliers.Length > 1)
+            {
+                return -1;
+            }
+
             outliers = values.Where(value => value > 3).ToArray();
             if (outliers.Length == 1)
             {
